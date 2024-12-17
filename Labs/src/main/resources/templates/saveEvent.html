@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Save Event</title>
+</head>
+<body>
+
+<div>
+
+  <div>
+    <form method="POST" action="/events/add">
+      <h2>Add Event</h2>
+      <p>
+        <input id="id" type="hidden" name="id" th:value="(${event} != null ? ${event.getId()} : 123)">
+        <input id="numTickets" type="hidden" name="numTickets" th:value="(${event} != null ? ${event.getTickets()} : 0)">
+
+        <label for="Name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Name" required="" autofocus="" th:value="(${event} != null ? ${event.getName()} : '')">
+      </p>
+      <p>
+        <label for="description">Description</label>
+        <input type="text" id="description" name="description" placeholder="Description" required="" th:value="(${event} != null ? ${event.getDescription()} : '')">
+      </p>
+      <p>
+        <label for="popularityScore" >Popularity Score</label>
+        <input type="number" id="popularityScore" name="popularityScore" placeholder="Popularity Score" required="" step="0.1" min="0" max="10" th:value="(${event} != null ? ${event.getPopularityScore()} : '')">
+      </p>
+      <p>
+        <label>Location</label>
+        <select name="locationId" id="locationId">
+          <option th:if="${event} == null"
+                  th:each="location : ${locations}"
+                  th:value="${location.getId()}"
+                  th:text="${location.getName()}">
+          </option>
+          <option th:if="${event} != null"
+                  th:selected="${event.getLocation() != null &&
+                  event.getLocation().getId() == location.getId()}"
+                  th:each="location : ${locations}"
+                  th:value="${location.getId()}"
+                  th:text="${location.getName()}">
+
+          </option>
+        </select>
+      </p>
+
+      <th:block th:if="${hasError}">
+        <div th:text="${error}" class="text-danger"></div>
+      </th:block>
+
+      <button type="submit">Save</button>
+    </form>
+    <a href="/events">Back</a>
+  </div>
+</div>
+
+</body>
+
+</html>

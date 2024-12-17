@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="">
+<head>
+  <meta charset="utf-8">
+  <title>Event Booking page - Welcome and choose an Event</title>
+  <style type="text/css">
+    body {
+      width: 800px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Welcome to our Event Booking App</h1>
+</header>
+<main>
+
+  <h2 th:text="${username}"></h2>
+
+  <form th:method="GET" th:action="@{/events}">
+    <h2>Search Events:</h2>
+    <input type="text" name="searchText" placeholder="Search by event name">
+    <input type="number" name="popularityScore" placeholder="Minimum rating" step="0.1" min="0">
+    <input type="submit" value="Search">
+  </form>
+
+  <form th:method="GET" th:action="@{/events}">
+    <br>
+    <h2>Search Events by Location:</h2>
+
+    <select name="locationId1" id="locationId1">
+      <option th:each="location : ${locations}"
+              th:value="${location.getId()}"
+              th:text="${location.getName()}">
+      </option>
+    </select>
+    <input type="submit" value="Search">
+  </form>
+
+
+  <form th:method="POST" th:action="@{/eventBooking}">
+    <br>
+    <div>
+      <h2>When finished Click here!</h2>
+      <input type="submit" value="Submit">
+    </div>
+
+
+    <h2>Choose number of tickets:</h2>
+    <input type="number" name="numTickets" min="1" max="10" placeholder="Num."><br/>
+    <br/>
+    <h2>Please enter your name.</h2>
+    <input type="text" name="attendeeName" placeholder="Name"><br/>
+    <br/>
+
+    <h2>Choose an event:</h2>
+    <th:block th:if="${hasError}">
+      <h1 style="color: red" th:text="${error}" class="text-danger"></h1>
+      <br>
+    </th:block>
+
+    <div th:each="event : ${events}">
+        <input type="radio" th:value="${event.getName()}" name="eventName"/>
+        <span th:text="'Name: ' + ${event.getName()} + ', Description: ' + ${event.getDescription()} + ', Rating: ' + ${event.getPopularityScore()} + ' Available Tickets: ' + ${event.getTickets()} + ' Location: ' + ${event.getLocation().getName()}"></span>
+    <th:block sec:authorize="hasRole('ADMIN')">
+      <form th:action="@{'/events/delete/{id}' (id=${event.getId()})}" th:method="DELETE" style="display: inline">
+        <button type="submit">
+          <i>Delete</i>
+        </button>
+      </form>
+    </th:block>
+    <th:block sec:authorize="hasRole('ADMIN')">
+      <form th:action="@{'/events/edit/{id}' (id=${event.getId()})}" style="display: inline">
+        <button type="submit">
+          <i>Edit</i>
+        </button>
+      </form>
+    </th:block>
+      <th:block>
+      <form th:action="@{'/events/details/{id}' (id=${event.getId()})}" style="display: inline">
+        <button type="submit">
+          <i>Details</i>
+        </button>
+      </form>
+    </th:block>
+
+  </div>
+  </form>
+
+  <br>
+  <th:block sec:authorize="hasRole('ADMIN')">
+  <a href="/events/add-form" style="align-content: center">Add Event</a>
+  </th:block>
+</main>
+</body>
+</html>
